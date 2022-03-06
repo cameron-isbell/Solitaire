@@ -1,0 +1,17 @@
+RULES: turn 3 unlimited
+FOUNDATIONS: Ac 3d 3h 3s
+TABLEAU:
+  4c 5h | Ts
+  2c | 7s 6d
+  | Kc Qd Js Td 9s
+  6s 8h Qc | 7c 6h 5s 4h 3c
+  8d | Qs Jd Tc 9d 8c 7d 6c 5d 4s
+  |
+  | Ks Qh Jc Th 9c
+STOCK:
+5c 4d Kh Jh 9h 7h Kd 8s |
+MOVES:
+ # r
+ # . w->6 . w->6 . w->2 #3->2 3->5 4->5
+# This move is invalid:
+ # 4->3

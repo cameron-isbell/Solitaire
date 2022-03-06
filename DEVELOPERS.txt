@@ -1,0 +1,159 @@
+<<<<<<< HEAD
+All functions authored by Cameron Isbell.
+
+Functions:
+	main:
+		main takes only argc and argv as inputs. 
+		
+		Main searches argv for switches -x and -m, their parameters, and a file to take input from. These can appear in any order.
+		
+		-x defines the output format to be the same as the input's, and -m defines how many moves to perform. 
+		-x's parameter is a file to write to (Which must exist, otherwise it outputs to stdout)
+		-m's parameter is a number of moves to perform
+
+
+	readFile:
+		
+		readFile takes only a filename and the number of moves to perform as input, and outputs either a 1 or 0. 1 on success and 0 on failure. 
+		
+		If the file does not exist or is not given, readFile will read from standard input. 
+		
+		readFile's method is to take a line out of the file and seperate it word by word using a helper function getWords.
+			A variable named tracker records which state the program should be in based on headlines such as "RULES:" in
+			the given file. A switch statement is then used to decide what actions to take, or information to record. 
+			
+			Case 1 records turn and limit, limit being -1 when unlimited.
+			Case 2 records foundation cards.
+			Case 3 records covered an uncovered cards using a | to tell the difference between the two. Once a pipe is reached
+				the variable flip is set to 1. Upon reaching a new line, flip resets back to zero until another | is reached.
+			Case 4 records waste and stock, which are again separated by a |. The same method of seperation in case 3 is used, 
+				but this time flip will not reset.
+			
+			Case 5 is the MOVES: case. While in this section of the program, each set of possible moves is contained. These include 
+			
+			Waste -> Foundation
+			Waste -> Tableau
+			Tableau -> Tableau
+			Tableau -> Foundation
+			Reset
+			
+			When we reach an -> instruction, the src and dest are defined as currentWord[0] and currentWord[3] respectively
+			In each situation but reset and turn over waste, check if the card can be moved to its destination. Reasons why this would be invalid include
+				1) The source's value is not 1 higher than the destination's
+				2) The source's suit is not opposite of the destination, unless the destination is the foundation
+				3) The destination is the foundation, and the suits are different
+				4) Trying to move an empty card somewhere
+			  
+			Resets are invalid if the stock is not empty
+			
+			Turn overs are invalid if the waste is empty
+			
+			Each action is based on the value of currentWord, which stores the current word the file is on. Once wordList, 
+				storing each word in a line, is empty, the next line is reached and loaded into wordList. This happens until
+				no more lines exist in the file. 
+	
+	getWords:
+		
+		getWords takes a string fullLine and an int pointer words as input. It returns an array of strings as output. 
+		
+		Using strtok from string.h, getWords first counts the number of words in the current line. 
+			It then uses that information to allocate memory to the array wordList. 
+		
+		Next, strtok runs a second time, but instead records all values reached, except those beginning with '#' in wordsList.
+			Once a word beginning with '#' is met, the while loops seperating the initial string end.
+
+		If a newline is encountered, getWords will replace it with a '\0', marking it as the end of the string. This is
+			for comparisons in the function readFile. Because readFile sends a copy and getWords makes a second copy
+			of the string, it is ok if strtok manipulates the string values. 
+			
+		Lastly, the int pointer words is set to numWords, the number of words in the original string, and wordList is returned.
+		
+	contains:
+	
+		contains takes a t_card (toCheck) from input, an array of t_cards, (list), and the number of items in that array (numItems).
+	
+		A for loop runs for the length of the list, and each card in the array is used check for equivalency by comparing the values of each member in the card. 
+		If two equivalent items are found, the index is returned. Otherwise, a zero is returned. 
+		
+	verifyValue:
+		
+		verifyValue takes only a character val as input. 
+		
+		verifyValue simply checks if val is equal to a value a card may have, such as King or 9. It returns 1 if true and 
+		zero if false. 
+		
+	verifySuit:
+
+		verifySuit takes only a character suit as input. 
+		
+		verifySuit simply checks if suit is equal to a valid suit a card may have, such as club or spades.
+		Returns 1 if this is true, and zero if false. 
+		
+	handleDuplicate:
+		By taking an array of duplicates, an array of all cards, the card to add, and the lengths of all arrays, handleDuplicate
+		checks the array of allCards against the card given. If this card is found, it is added to duplicates. 
+		
+		This function is used everytime a card is added to the any array of cards unless it is a foundation card with a value of '_'
+		
+	getCardVal:
+		Given a possible value of a card, this returns an int value respective to the given value. 
+		For example, an A is 1, a 2 is 2, and a K is 13.
+	
+	setCard:
+		Takes a string, a pointer to a card, and covered. 
+		
+		The string is the value we want to convert into a card. The card's suit is set to str[1], while the value is
+		retrieved by getCardVal
+		The intended properties are added to the card.
+		
+	suit_pos:
+		suit_pos is used for the foundations array to keep the foundations in a certain order. The order used was the one in Google's online solitaire.
+		Given 'h' it will return 0. 
+		Given 'd' it will return 1.
+		Given 'c' it will return 2.
+		Given 's' it will return 3.
+		
+	is_opposite:
+		is_opposite checks if the two given cards have suits of the opposite color.
+		If true, it returns 1. Otherwise, it returns 0
+	
+	rmv_card:
+		Takes an array of cards, its size, and an index to remove at.
+		Given this array, it shifts all values in the array by 1 starting at the index, then removes
+			the last card in the array.
+		By doing this, it ensures each card will be in order.
+		
+	print_state:
+		Given all the properties of the game, print its state
+		
+		If -x is given in the command line, it will print the outcome in the same format as the given files. 
+		Otherwise, it prints in human readable format.
+		
+		These formats are defined in the given PDF. 
+		
+	get_valid_moves:
+		Takes the essential pieces of a game, such as the tableau, foundations, etc. and finds every possible move for their current state
+		Recursively finds these and acts as a depth first search if the nodes are the game states and the edges are the moves
+		
+		
+		
+Structs:
+	t_card:
+		Stores the properties of a card.
+			val: card's value, such as an Ace, a King, a 8, etc. as its numerical value.
+			suit: stores the suit of a card, such as Hearts or Clubs. Represented by the first character of the suit name
+			covered: stores whether or not the card is flipped.
+			
+	waste, foundations, stock, column:
+		All these structs are equivalent, but made seperately for a couple of reasons.
+		First, I found it useful to have the size property stored with the array
+		Second, In this portion of the assignment I found myself turning tableau into its own unique struct. By making these their own struct,
+			it is easier to update code in the future.
+			
+			t_card* stored: an array of t_cards. 
+			size: the size of the array.
+	tabl: 
+		Stores the tableau portion of the game state
+		
+
+			column* cols: An array of columns. Each column is an array of cards. This is used to seperate each column from another. 		

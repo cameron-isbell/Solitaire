@@ -1,0 +1,10 @@
+RULES: turn 3 unlimited FOUNDATIONS: Jc Td Th Ts
+TABLEAU:
+  |
+  | Kc Qh
+  |
+  | Kh Qs
+  | Kd Qc
+  Jh Jd Js Ks | Qd
+  |
+STOCK: | MOVES:
